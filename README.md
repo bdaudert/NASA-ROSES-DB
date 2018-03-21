@@ -15,19 +15,19 @@ You can find the most up-to-date deployments [here](http://open-et-1.appspot.com
 - Links:
     - https://docs.google.com/document/d/1tvkSGb-49YlSqW3AGknr7T_xoRB1KngCD3f2uiwOS3Q/edit
 - Installation
-    To create the "ee-python" conda environment, execute the following:
+    To create the "roses-db" conda environment, execute the following:
     ```
-    conda remove --name ee-python --all
-    conda create --name ee-python python=2.7
+    conda remove --name roses-db --all
+    conda create --name roses-db python=2.7
     ```
 
-    To activate the "ee-python" environement on MacOS:
+    To activate the "roses-db" environement on MacOS:
     ```
-    source activate ee-python
+    source activate roses-db
     ```
-    To activate the "ee-python" environment on Windows:
+    To activate the "roses-db" environment on Windows:
     ```
-    activate ee-python
+    activate roses-db
     ```
 
     To install the necessary external Python modules:
