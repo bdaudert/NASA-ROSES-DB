@@ -16,7 +16,7 @@
 *.p12
 
 config.py
-test.py
+ee_test.py
 privatekey.json
 # Directories
 /OLD
