@@ -155,7 +155,7 @@ class ET_Util(object):
             )
             return ee.Feature(None, reduced_image_data)
 
-        et_data = {}
+        etdata = {}
         imgs = []
         # logging.info('PROCESSING VARIABLE ' + str(v))
         stat_names = statics['stats_by_var_res'][var][t_res]
@@ -183,31 +183,32 @@ class ET_Util(object):
 
         for stat_idx, stat in enumerate(stat_names):
             if 'features' not in f_data.keys() or not f_data['features']:
-                et_data[stat] = -9999
+                etdata[stat] = -9999
                 continue
             try:
                 feat = f_data['features'][stat_idx]
             except:
-                et_data[stat] = -9999
+                etdata[stat] = -9999
                 continue
 
             if 'properties' not in feat.keys():
-                et_data[stat] = -9999
+                etdata[stat] = -9999
                 continue
             try:
                 val = feat['properties'][var]
-                et_data[stat] = round(val, 4)
+                etdata[stat] = round(val, 4)
             except:
-                et_data[stat] = -9999
+                etdata[stat] = -9999
                 continue
-        return et_data
+        return etdata
 
-    def set_db_data_entity(self, UNIQUE_ID, et_data):
+    def set_db_data_entity(self, UNIQUE_ID, feat_idx, etdata):
         '''
         sets up datastore client and datastore entity
         Args:
             UNIQUE_ID,: unique identity of the feature, used to define the db key
-            et_data: dictionary of et_data
+            f_idx: feature index, need this to query for multiple features
+            etdata: dictionary of etdata
         Returns:
             datstore entitity
         '''
@@ -215,22 +216,24 @@ class ET_Util(object):
         db_key = self.client.key('DATA', UNIQUE_ID,)
         entity = datastore.Entity(key=db_key)
         entity.update({
+            'feat_idx': feat_idx,
             'region': self.region,
             'year': int(self.year),
             'dataset': self.dataset,
             'et_model': self.et_model
         })
-        for key, val in et_data.iteritems():
+        for key, val in etdata.iteritems():
             entity.update({
                 key: val
             })
         return entity
 
-    def set_db_meta_entity(self, UNIQUE_ID, geo_props):
+    def set_db_meta_entity(self, UNIQUE_ID, feat_idx, geo_props):
         '''
         sets up datastore client and datastore entity
         Args:
             UNIQUE_ID,: unique identity of the feature, used to define the db key
+            feat_idx: feature index, need this to query for multiple features
             geo_props: properties of the geometry feature
         Returns:
             datstore entitity
@@ -240,6 +243,7 @@ class ET_Util(object):
         db_key = self.client.key('METADATA', UNIQUE_ID)
         entity = datastore.Entity(key=db_key)
         entity.update({
+            'feat_idx': feat_idx,
             'region': self.region,
             'year': int(self.year),
             'dataset': self.dataset,
@@ -314,12 +318,12 @@ class ET_Util(object):
             '''
             unique_str = ('-').join([self.region, self.dataset, self.et_model, self.year, str(f_idx)])
             UNIQUE_ID = hashlib.md5(unique_str).hexdigest()
-            meta_entities.append(self.set_db_meta_entity(UNIQUE_ID, geo_props))
-            et_data = {}
+            meta_entities.append(self.set_db_meta_entity(UNIQUE_ID, f_idx,geo_props))
+            etdata = {}
             for t_res in t_res_list:
                 for var in var_list:
                     coll = colls[t_res + '_' + var]
-                    et_data.update(self.compute_et_stats(coll, var, geom, t_res))
-            data_entities.append(self.set_db_data_entity(UNIQUE_ID, et_data))
+                    etdata.update(self.compute_et_stats(coll, var, geom, t_res))
+            data_entities.append(self.set_db_data_entity(UNIQUE_ID, f_idx, etdata))
         return meta_entities, data_entities
 

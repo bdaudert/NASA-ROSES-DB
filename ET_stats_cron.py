@@ -11,7 +11,7 @@ import eeMethods
 ###################################################
 if __name__ == "__main__":
     startTime = datetime.now()
-    print datetime.now() - startTime
+    print startTime
     for region in ['Mason']:
         region_data = []
         for year in ['2003']:
