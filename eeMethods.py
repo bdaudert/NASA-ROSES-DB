@@ -128,7 +128,7 @@ class ET_Util(object):
             img = coll.mean()
         return img
 
-    def set_geo_properties(self, geo_props):
+    def set_meta_properties(self, geo_props, geom):
         '''
         Populates metadata from the geo properties
         Defined in the geojson data file
@@ -137,6 +137,7 @@ class ET_Util(object):
         for prop in statics['geo_meta_cols']:
             if prop in geo_props.keys():
                 props[prop] = geo_props[prop]
+        #props['GEOM_COORDINATES'] = json.dumps(geom['coordinates'])
         return props
 
     def compute_et_stats(self, coll, var, geom, t_res):
@@ -311,14 +312,14 @@ class ET_Util(object):
             geom_coords = geo_feat['geometry']['coordinates']
             geom_coords = [Utils.orient_poly_ccw(c) for c in geom_coords]
             geom = ee.Geometry.Polygon(geom_coords)
-            geo_props = self.set_geo_properties(geo_feat['properties'])
+            geo_props = self.set_meta_properties(geo_feat['properties'], geo_feat['geometry'])
             '''
             Create a UNIQUE_ID for the geo feature
             This ID will be used in both METADATA and DATA entities
             '''
             unique_str = ('-').join([self.region, self.dataset, self.et_model, self.year, str(f_idx)])
             UNIQUE_ID = hashlib.md5(unique_str).hexdigest()
-            meta_entities.append(self.set_db_meta_entity(UNIQUE_ID, f_idx,geo_props))
+            meta_entities.append(self.set_db_meta_entity(UNIQUE_ID, f_idx, geo_props))
             etdata = {}
             for t_res in t_res_list:
                 for var in var_list:

@@ -1,5 +1,5 @@
-{
-    "ee_coll_name": {
+{ "ee_coll_name"TID", "BASIN", "STATE", "HYD_AREA", "HYD_AREA_N", "HUC8", "HUC8_NAME",
+            "PIXELCOUNT", "AREA"
         "MODIS": {
             "SSEBop":{
                 "decadel": "projects/usgs-ssebop/modis_et_dekadal",
@@ -31,9 +31,7 @@
         "etrf": "sum",
         "pr": "sum"
     },
-    "geo_meta_cols": ["OBJECTID", "BASIN", "STATE", "HYD_AREA", "HYD_AREA_N", "HUC8", "HUC8_NAME", 
-            "PIXELCOUNT", "YEAR", "AREA"
-    ],
+    "geo_meta_cols": ["OBJECTID","STATE", "HUC8", "HUC8_NAME","PIXELCOUNT", "AREA"],
     "stats_by_var_res":{
         "et": {
             "annual": ["et_annual"],
