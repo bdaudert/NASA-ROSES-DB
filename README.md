@@ -16,19 +16,19 @@ You can find the most up-to-date deployments [here](http://open-et-1.appspot.com
 - Links:
     - https://docs.google.com/document/d/1tvkSGb-49YlSqW3AGknr7T_xoRB1KngCD3f2uiwOS3Q/edit
 - Installation
-    To create the "roses-db" conda environment, execute the following:
+    To create the "nasa-roses-datastore" conda environment, execute the following:
     ```
     conda remove --name nasa-roses-datastore --all
     conda create --name nasa-roses-datastore python=2.7
     ```
 
-    To activate the "roses-db" environement on MacOS:
+    To activate the "nasa-roses-datastore" environement on MacOS:
     ```
-    source activate roses-db
+    source activate nasa-roses-datastore
     ```
-    To activate the "roses-db" environment on Windows:
+    To activate the "nasa-roses-datastore" environment on Windows:
     ```
-    activate roses-db
+    activate nasa-roses-datastore
     ```
 
     To install the necessary Python modules:
