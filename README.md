@@ -1,6 +1,7 @@
-# NASA ROSES DB
+# NASA ROSES DATASTORE
 
-Code repository for the NASA ROSES database code. The NASA ROSES project is under development by the Desert Research Institute, NASA for NOAA
+Code repository for the NASA ROSES DATASTORE API. 
+The NASA ROSES project is under development by the Desert Research Institute, NASA for NOAA
 ### Links & Resources
 
 You can find the most up-to-date deployments [here](http://open-et-1.appspot.com/).
@@ -17,8 +18,8 @@ You can find the most up-to-date deployments [here](http://open-et-1.appspot.com
 - Installation
     To create the "roses-db" conda environment, execute the following:
     ```
-    conda remove --name nasa-roses-db --all
-    conda create --name nasa-roses-db python=2.7
+    conda remove --name nasa-roses-datastore --all
+    conda create --name nasa-roses-datastore python=2.7
     ```
 
     To activate the "roses-db" environement on MacOS:

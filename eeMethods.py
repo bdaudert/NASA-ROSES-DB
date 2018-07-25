@@ -334,7 +334,7 @@ class ET_Util(object):
             meta_props = self.set_meta_properties(geo_feat['properties'], geo_feat['geometry'])
             unique_meta_str = ('-').join([self.region, self.year, str(f_idx)])
             UNIQUE_META_ID = hashlib.md5(unique_meta_str).hexdigest()
-            meta_entities.append(self.set_db_metadata_entity(UNIQUE_META_ID, str(f_idx), meta_props)
+            meta_entities.append(self.set_db_metadata_entity(UNIQUE_META_ID, str(f_idx), meta_props))
             for var in var_list:
                 unique_str = ('-').join([self.region, self.dataset, self.et_model, self.year, var, str(f_idx)])
                 UNIQUE_ID = hashlib.md5(unique_str).hexdigest()
@@ -343,7 +343,7 @@ class ET_Util(object):
                 else:
                     etdata = {}
                     for res in config.statics['start_end_mon_days_by_res'].keys():
-                        etdata_key = var + '_' _ res
+                        etdata_key = var + '_' + res
                         new_key = 'data_' + res
                         try:
                             etdata[new_key] = local_etdata[f_idx]['properties'][etdata_key]
