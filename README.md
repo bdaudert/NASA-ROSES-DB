@@ -17,8 +17,8 @@ You can find the most up-to-date deployments [here](http://open-et-1.appspot.com
 - Installation
     To create the "roses-db" conda environment, execute the following:
     ```
-    conda remove --name roses-db --all
-    conda create --name roses-db python=2.7
+    conda remove --name nasa-roses-db --all
+    conda create --name nasa-roses-db python=2.7
     ```
 
     To activate the "roses-db" environement on MacOS:
@@ -35,6 +35,8 @@ You can find the most up-to-date deployments [here](http://open-et-1.appspot.com
     conda install numpy=1.6.2=py27_4 oauth2client httplib2 cryptography pyOpenSSL cffi
     
     pip install earthengine-api
+    
+    pip install --no-cache-dir --only-binary :all: grpcio==1.10.1
     
     pip install --upgrade google-cloud
     ```
@@ -57,13 +59,26 @@ You can find the most up-to-date deployments [here](http://open-et-1.appspot.com
     print(ee.Image('srtm90_v4').getThumbUrl())"
     ```
 
+- To populate the DATASTORE or the nasa-roses-datastore repo
+    ```
+    source acticate nasa-rose-db
+    cd nasa-roses-datastore
+    ```
+    - Set the account and credential info in config.py
+    ```
+    EE_ACCOUNT = '@nasa-roses-datastore.iam.gserviceaccount.com'
+    # The private key associated with your service account in JSON format.
+    EE_PRIVATE_KEY_FILE = 'nasa-roses-datastore.json'
+    EE_CREDENTIALS = ee.ServiceAccountCredentials(EE_ACCOUNT, EE_PRIVATE_KEY_FILE)
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'nasa-roses-datastore.json'
+    ```
+
+    - run the statndalone population script
+    ```
+    python ET_starts_cron.py
+    ```
 
    
 ### Repository Organization:
 
 ### NOTES
-- Metadata (feature coordinates etc. ) are safed separately from the actual ET data 
-- OBJECTID should be unique for each geometry feature
-- Each feature will be saved separately
-- The ET data for each feature will be saved separately
-- OBJECTID will be used to query that database

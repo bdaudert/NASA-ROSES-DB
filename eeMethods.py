@@ -7,17 +7,12 @@ import urllib2
 import hashlib
 
 import ee
-# Needed to store data to datastore from outside app engine
+# Needed to add data to datastore from outside app engine
 from google.cloud import datastore
 
-from config import statics
-# from config import GEO_BUCKET_NAME
-from config import GEO_BUCKET_URL
-
+import config
 import Utils
 
-# Initialize ee
-ee.Initialize()
 
 # Set logging level
 logging.basicConfig(level=logging.DEBUG)
@@ -38,13 +33,17 @@ class ET_Util(object):
     '''
     def __init__(self, region, year, dataset, et_model):
         self.region = region
-        self.geoFName = region + '_' + year + '.geojson'
         self.year = year
+        if self.region in ['Mason', 'US_fields']:
+            self.geoFName = region + '_' + year + '_GEOM.geojson'
+        else:
+            self.geoFName = region + '_GEOM.geojson'
         self.dataset = dataset
         self.et_model = et_model
         self.missing_value = -9999
-        self.geo_bucket_url = GEO_BUCKET_URL
-        self.client = datastore.Client('open-et-1')
+        self.geo_bucket_url = config.GEO_BUCKET_URL
+        # Needed to add data to datastore from outside app engine
+        self.client = datastore.Client(config.PROJECT_ID)
 
     def read_data_from_bucket(self):
         f = self.geo_bucket_url + self.geoFName
@@ -60,7 +59,7 @@ class ET_Util(object):
         '''
         ds = self.dataset
         m = self.et_model
-        coll_name = statics['ee_coll_name'][ds][m][t_res]
+        coll_name = config.statics['ee_coll_name'][ds][m][t_res]
         logging.info('EE CALL: ee.ImageCollection({})'.format(coll_name))
         coll = ee.ImageCollection(coll_name)
         return coll
@@ -134,13 +133,19 @@ class ET_Util(object):
         Defined in the geojson data file
         '''
         props = {}
-        for prop in statics['geo_meta_cols']:
+        for prop in config.statics['geo_meta_cols'][self.region]:
             if prop in geo_props.keys():
                 props[prop] = geo_props[prop]
-        #props['GEOM_COORDINATES'] = json.dumps(geom['coordinates'])
         return props
 
-    def compute_et_stats(self, coll, var, geom, t_res):
+    def compute_et_stats(self, coll, var, geom):
+        '''
+        Computes annual, seasonal (April - Sept) and monthly et stats
+        :param coll:
+        :param var:
+        :param geom:
+        :return:
+        '''
         def average_over_region(img):
             '''
             Averages the ee.Image over all pixels of ee.Geometry
@@ -158,18 +163,15 @@ class ET_Util(object):
 
         etdata = {}
         imgs = []
-        # logging.info('PROCESSING VARIABLE ' + str(v))
-        stat_names = statics['stats_by_var_res'][var][t_res]
-        for stat_name in stat_names:
-            # logging.info('PROCESSING STATISTIC ' + str(stat_name))
-            res = stat_name.split('_')[1]
+        for res in config.statics['start_end_mon_days_by_res'].keys():
+            # logging.info('PROCESSING STATISTIC ' + res)
             # Filer collection by date
             dS_str = str(self.year) + '-' +\
-                statics['start_end_mon_days_by_res'][res][0]
+                config.statics['start_end_mon_days_by_res'][res][0]
             dE_str = str(self.year) + '-' +\
-                statics['start_end_mon_days_by_res'][res][1]
+                config.statics['start_end_mon_days_by_res'][res][1]
             coll_t = self.filter_coll_by_dates(coll, dS_str, dE_str)
-            temporal_stat = statics['t_stat_by_var']
+            temporal_stat = config.statics['t_stat_by_var'][var]
             img = self.reduce_collection_to_img(coll_t, temporal_stat)
             # feats = ee.FeatureCollection(average_over_region(img))
             imgs.append(img)
@@ -182,30 +184,30 @@ class ET_Util(object):
             f_data = {'features': []}
             logging.error(e)
 
-        for stat_idx, stat in enumerate(stat_names):
+        for res_idx, res in enumerate(config.statics['start_end_mon_days_by_res'].keys()):
             if 'features' not in f_data.keys() or not f_data['features']:
-                etdata[stat] = -9999
+                etdata['data_' + res] = -9999
                 continue
             try:
-                feat = f_data['features'][stat_idx]
+                feat = f_data['features'][res_idx]
             except:
-                etdata[stat] = -9999
+                etdata['data_' + res] = -9999
                 continue
 
             if 'properties' not in feat.keys():
-                etdata[stat] = -9999
+                etdata['data_' + res] = -9999
                 continue
             try:
-                val = feat['properties'][var]
-                etdata[stat] = round(val, 4)
+                val = feat['properties'][var + '_' + res]
+                etdata['data_' + res] = round(val, 4)
             except:
-                etdata[stat] = -9999
+                etdata['data_' + res] = -9999
                 continue
         return etdata
 
-    def set_db_data_entity(self, UNIQUE_ID, feat_idx, etdata):
+    def set_db_data_entity(self, UNIQUE_ID, feat_idx, etdata, var):
         '''
-        sets up datastore client and datastore entity
+        sets up datastore client and datastore entity belonging to DATA
         Args:
             UNIQUE_ID,: unique identity of the feature, used to define the db key
             f_idx: feature index, need this to query for multiple features
@@ -213,7 +215,7 @@ class ET_Util(object):
         Returns:
             datstore entitity
         '''
-        # Instantiates a client
+        # Instantiates a client and the datastore kind DATA
         db_key = self.client.key('DATA', UNIQUE_ID,)
         entity = datastore.Entity(key=db_key)
         entity.update({
@@ -221,40 +223,42 @@ class ET_Util(object):
             'region': self.region,
             'year': int(self.year),
             'dataset': self.dataset,
-            'et_model': self.et_model
+            'et_model': self.et_model,
+            'variable': var
         })
+        # Set the etdata
         for key, val in etdata.iteritems():
             entity.update({
                 key: val
             })
         return entity
 
-    def set_db_meta_entity(self, UNIQUE_ID, feat_idx, geo_props):
+    def set_db_metadata_entity(self, UNIQUE_ID, feat_idx, meta_props):
         '''
-        sets up datastore client and datastore entity
+        sets up datastore client and datastore entity belonging to METADATA
         Args:
             UNIQUE_ID,: unique identity of the feature, used to define the db key
-            feat_idx: feature index, need this to query for multiple features
-            geo_props: properties of the geometry feature
+            f_idx: feature index, need this to query for multiple features
+            etdata: dictionary of etdata
         Returns:
             datstore entitity
         '''
-        # Instantiates a client
+        # Instantiates a client and the datastore kind DATA
 
-        db_key = self.client.key('METADATA', UNIQUE_ID)
+        db_key = self.client.key('METADATA', UNIQUE_ID, )
         entity = datastore.Entity(key=db_key)
         entity.update({
             'feat_idx': feat_idx,
             'region': self.region,
-            'year': int(self.year),
-            'dataset': self.dataset,
-            'et_model': self.et_model
+            'year': int(self.year)
         })
-        for key, val in geo_props.iteritems():
+        # Set the metadata
+        for key, val in meta_props.iteritems():
             entity.update({
                 key: val
             })
         return entity
+
 
     def add_to_db(self, entity_list):
         '''
@@ -281,50 +285,70 @@ class ET_Util(object):
             self.client.put_multi(ents_to_add)
             num_added = end
 
-
-    def get_data_and_set_db_identities(self):
+    def get_data_and_set_db_entities(self, compute=True):
         '''
         Gets geo features from geojson file
         and computes the et stats for all variables
         and temporal resolutions
+
+        if compute is True, we compute the et stats in EE
+        if compute is False, we read the et data from a local
+        data file (et data was provided in the data file)
         '''
         # FIX ME: add more vars as data comes online
         # MODIS SSEBop only has et right now
-        t_res_list = statics['all_t_res']
+        t_res_list = config.statics['all_t_res']
         var_list = ['et']
-
-        # Get the colllections so we don't have to do it for each feature
-        colls = {}
-        for t_res in t_res_list:
-            coll = self.get_collection(t_res)
-            for var in var_list:
-                coll = self.filter_coll_by_var(coll, var)
-                colls[t_res + '_' + var] = coll
-
+        # Read the geo data from the bucket
         geo_data = self.read_data_from_bucket()
         if 'features' not in geo_data.keys():
             logging.error('NO DATA FOUND IN BUCKET, FILE: ' + self.geoFName)
 
-        meta_entities = []
         data_entities = []
-        # for f_idx, geo_feat in enumerate(geo_data['features'][0:1]):
-        for f_idx, geo_feat in enumerate(geo_data['features']):
-            geom_coords = geo_feat['geometry']['coordinates']
-            geom_coords = [Utils.orient_poly_ccw(c) for c in geom_coords]
-            geom = ee.Geometry.Polygon(geom_coords)
-            geo_props = self.set_meta_properties(geo_feat['properties'], geo_feat['geometry'])
-            '''
-            Create a UNIQUE_ID for the geo feature
-            This ID will be used in both METADATA and DATA entities
-            '''
-            unique_str = ('-').join([self.region, self.dataset, self.et_model, self.year, str(f_idx)])
-            UNIQUE_ID = hashlib.md5(unique_str).hexdigest()
-            meta_entities.append(self.set_db_meta_entity(UNIQUE_ID, f_idx, geo_props))
-            etdata = {}
+        meta_entities = []
+        if not compute:
+            # Get the etdata from the local file
+            fl = config.LOCAL_DATA_DIR + self.et_model + '/' + self.region + '_' + self.year + '_DATA.json'
+            with open(fl) as f:
+                j_data = json.load(f)
+                local_etdata = j_data['features']
+        else:
+            # Get the colllections so we don't have to do it for each feature
+            colls = {}
             for t_res in t_res_list:
+                coll = self.get_collection(t_res)
                 for var in var_list:
-                    coll = colls[t_res + '_' + var]
-                    etdata.update(self.compute_et_stats(coll, var, geom, t_res))
-            data_entities.append(self.set_db_data_entity(UNIQUE_ID, f_idx, etdata))
-        return meta_entities, data_entities
+                    coll = self.filter_coll_by_var(coll, var)
+                    colls[t_res + '_' + var] = coll
+        for f_idx, geo_feat in enumerate(geo_data['features']):
+            feat_coords = geo_feat['geometry']['coordinates']
+            if geo_feat['geometry']['type'] == 'MultiPolygon':
+                geom_coords = Utils.orient_polygons_ccw(feat_coords)
+                geom = ee.Geometry.MultiPolygon(geom_coords)
+            elif geo_feat['geometry']['type'] == 'Polygon':
+                geom_coords = [Utils.orient_polygon_ccw(c) for c in feat_coords]
+                geom = ee.Geometry.Polygon(geom_coords)
+            else:
+                continue
+            # Add metadata to METADATA Datastore entity
+            meta_props = self.set_meta_properties(geo_feat['properties'], geo_feat['geometry'])
+            unique_meta_str = ('-').join([self.region, self.year, str(f_idx)])
+            UNIQUE_META_ID = hashlib.md5(unique_meta_str).hexdigest()
+            meta_entities.append(self.set_db_metadata_entity(UNIQUE_META_ID, str(f_idx), meta_props)
+            for var in var_list:
+                unique_str = ('-').join([self.region, self.dataset, self.et_model, self.year, var, str(f_idx)])
+                UNIQUE_ID = hashlib.md5(unique_str).hexdigest()
+                if compute:
+                    etdata = self.compute_et_stats(coll, var, geom)
+                else:
+                    etdata = {}
+                    for res in config.statics['start_end_mon_days_by_res'].keys():
+                        etdata_key = var + '_' _ res
+                        new_key = 'data_' + res
+                        try:
+                            etdata[new_key] = local_etdata[f_idx]['properties'][etdata_key]
+                        except:
+                            etdata[new_key] = -9999
+                data_entities.append(self.set_db_data_entity(UNIQUE_ID, f_idx, etdata, var))
+        return data_entities, meta_entities
 

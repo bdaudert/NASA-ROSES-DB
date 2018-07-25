@@ -14,10 +14,10 @@
 *.bak
 *.pem
 *.p12
+*.json
 
 config.py
 ee_test.py
-privatekey.json
 # Directories
 /OLD
 /lib

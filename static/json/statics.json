@@ -1,5 +1,5 @@
-{ "ee_coll_name"TID", "BASIN", "STATE", "HYD_AREA", "HYD_AREA_N", "HUC8", "HUC8_NAME",
-            "PIXELCOUNT", "AREA"
+{ 
+    "ee_coll_name": {
         "MODIS": {
             "SSEBop":{
                 "decadel": "projects/usgs-ssebop/modis_et_dekadal",
@@ -8,7 +8,26 @@
             }
         }
     },
+    "all_region": ["Mason", "US_states_west_500k", "US_counties_west_500k", 
+        "US_HUC2_west", "US_HUC4_west", "US_HUC6_west", "US_HUC8_west", "US_HUC10_west"
+    ],
+    "all_year": {
+        "MODIS": ["2003", "2010"],
+        "Landsat":["1984", "2010"],
+        "gridMet":["1979", "2010"]
+    },
+    "all_et_model":  ["SSEBop"],
     "all_t_res": ["annual", "monthly"],
+    "all_data_cols": [
+        "etr_annual", "et_annual", "etrf_annual", "pr_annual", "net_annual",
+        "etr_seasonal", "et_seasonal", "etrf_seasonal", "pr_seasonal", "net_seasonal",
+        "start_mon", "end_mon",
+        "etr_m01", "etr_m02", "etr_m03", "etr_m04", "etr_m05",
+        "etr_m06", "etr_m07", "etr_m08", "etr_m09", "etr_m10", "etr_m11", "etr_m12",
+        "et_m01", "et_m02" , "et_m03" , "et_m04", "et_m05",
+        "et_m06", "et_m07", "et_m08", "et_m09", "et_m10", "et_m11", "et_m12",
+        "etrf_m01"
+    ],
     "start_end_mon_days_by_res": {
     	"annual": ["01-01", "12-31"],
     	"seasonal": ["04-01", "10-30"],
@@ -31,8 +50,17 @@
         "etrf": "sum",
         "pr": "sum"
     },
-    "geo_meta_cols": ["OBJECTID","STATE", "HUC8", "HUC8_NAME","PIXELCOUNT", "AREA"],
-    "stats_by_var_res":{
+    "geo_meta_cols": { 
+        "Mason": ["OBJECTID", "STATE", "HUC8", "HUC8_NAME", "PIXELCOUNT", "AREA"],
+        "US_states_west_500k": ["STATEFP", "STUSPS", "NAME", "ALAND", "AWATER"],
+        "US_counties_west_500k": ["STATEFP", "COUNTYFP", "NAME", "ALAND", "AWATER"],
+        "US_HUC2_west": ["AREASQKM", "STATES", "HUC2", "NAME"],
+        "US_HUC4_west": ["AREASQKM", "STATES", "HUC2", "NAME"],
+        "US_HUC6_west": ["AREASQKM", "STATES", "HUC2", "NAME"],
+        "US_HUC8_west": ["AREASQKM", "STATES", "HUC2", "NAME"],
+        "US_HUC10_west": ["AREASQKM", "STATES", "HUC2", "NAME"]
+    }, 
+    "stats_by_var_res": {
         "et": {
             "annual": ["et_annual"],
             "monthly": ["et_m01", "et_m02" , "et_m03" , "et_m04",
