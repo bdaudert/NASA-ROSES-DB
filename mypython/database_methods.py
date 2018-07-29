@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import os
 import logging
 import json
 import urllib2
@@ -18,6 +17,16 @@ import Utils
 logging.basicConfig(level=logging.DEBUG)
 
 
+def populate_datastore(region, ds, et_model, compute=True):
+    yr_range = config.statics['all_years'][ds]
+    for yr in range(int(yr_range[0]), int(yr_range[1])):
+        year = str(yr)
+        msg = 'PROCESSING Region/Year/Dataset/Model ' + region + '/' + year + '/' + ds + '/' + et_model
+        logging.info(msg)
+        ET_helper = database_methods.ET_Util(region, year, ds, et_model)
+        data_entities, meta_entities = ET_helper.get_data_and_set_db_entities(compute=compute)
+        ET_helper.add_to_db(data_entities)
+        ET_helper.add_to_db(meta_entities)
 
 
 class ET_Util(object):

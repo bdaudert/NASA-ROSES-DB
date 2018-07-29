@@ -16,17 +16,18 @@ You can find the most up-to-date deployments [here](http://open-et-1.appspot.com
 - Links:
     - https://docs.google.com/document/d/1tvkSGb-49YlSqW3AGknr7T_xoRB1KngCD3f2uiwOS3Q/edit
 - Installation
-    To create the "nasa-roses-datastore" conda environment, execute the following:
+    To create the "nasa-roses-datastore" conda environment in the appengine standard environment, execute the following:
     ```
     conda remove --name nasa-roses-datastore --all
     conda create --name nasa-roses-datastore python=2.7
     ```
 
-    To activate the "nasa-roses-datastore" environement on MacOS:
+    To activate the "nasa-roses-datastore" environement
+    - MacOS:
     ```
     source activate nasa-roses-datastore
     ```
-    To activate the "nasa-roses-datastore" environment on Windows:
+    - Windows:
     ```
     activate nasa-roses-datastore
     ```
@@ -41,7 +42,21 @@ You can find the most up-to-date deployments [here](http://open-et-1.appspot.com
     
     pip install --upgrade google-cloud
     ```
-    
+    Create the requirements.txt file.
+    At a minimum the requirements.txt file should look like this
+    ```
+    earthengine-api >= 0.1.100
+    httplib2
+    Jinja2 == 2.6
+    numpy == 1.6.2
+    oauth2client
+    six
+    ```
+    The following command will install the the external Python modules listed in the requirements.txt file into the lib folder for upload to AppEngine.
+    ```
+    pip install -r requirements.txt -t lib
+ 
+
 - Copy the privatekey.json that you generated at [https://console.cloud.google.com]
   into the project directory
     
@@ -50,6 +65,12 @@ You can find the most up-to-date deployments [here](http://open-et-1.appspot.com
     EE_ACCOUNT = 'xxxx.gserviceaccount.com'
     EE_PRIVATE_KEY_FILE = 'privatekey.json'
     ```
+    iIn config.py you will also need to tell app engine to add the lib folder to the third party libraries as follows:
+    ```
+    from google.appengine.ext import vendor
+    # Add any libraries install in the "lib" folder.
+    vendor.add('lib')
+    ```
 
 - Testing installation and authentication:
     ```
@@ -57,7 +78,7 @@ You can find the most up-to-date deployments [here](http://open-et-1.appspot.com
     import config
     import ee
     ee.Initialize(ee.ServiceAccountCredentials(config.EE_ACCOUNT, config.EE_PRIVATE_KEY_FILE))
-    print(ee.Image('srtm90_v4').getThumbUrl())"
+    print(ee.Image('srtm90_v4').getThumbUrl())
     ```
 
 - To populate the DATASTORE or the nasa-roses-datastore repo

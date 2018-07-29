@@ -1,0 +1,25 @@
+<!--css-->
+<head>
+    <link rel="stylesheet" href="https://openlayers.org/en/v4.6.4/css/ol.css" type="text/css">
+    <link rel="stylesheet" href="static/css/nasa-roses.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<!--jQuery-->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<!--Bootstrap (needs to be after jQuery)-->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<!--Run Time Scripts-->
+<script>
+    //Set the statics
+    var statics = {};
+    $.ajax({
+        url: 'static/json/statics.json',
+        async: false,
+        dataType: 'json',
+        success: function(data) {
+            statics = data; 
+        }
+    }); 
+</script>

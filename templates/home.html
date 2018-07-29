@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Google cloudSQL</h1>
+
+<p>This Python Flask application demonstrates App Engine Flexible, cloudSQL</p>
+
+<br>
+
+    <p>GEODATA: <br></p>
+    {{ geodata | safe }}
+    <br><br>
+    <p>ETDATA: <br></p>
+    {{ etdata | safe }}
+
+{% endblock %}

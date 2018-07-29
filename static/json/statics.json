@@ -1,4 +1,19 @@
-{ 
+{
+    "variable_defaults": {
+        "region": "US_states_west_500k",
+        "year": "2003",
+        "variable": "et",
+        "dataset": "MODIS",
+        "et_model": "SSEBop",
+        "features": ["all"]
+    },
+    "form_option_keys": ["region", "variable", "dataset", "et_model"],
+    "response_vars":{
+        "home": [],
+        "populate_db": [],
+        "depopulate_db": [],
+        "query_db": []
+    },
     "ee_coll_name": {
         "MODIS": {
             "SSEBop":{
@@ -11,7 +26,7 @@
     "all_region": ["Mason", "US_states_west_500k", "US_counties_west_500k", 
         "US_HUC2_west", "US_HUC4_west", "US_HUC6_west", "US_HUC8_west", "US_HUC10_west"
     ],
-    "all_year": {
+    "all_years": {
         "MODIS": ["2003", "2010"],
         "Landsat":["1984", "2010"],
         "gridMet":["1979", "2010"]
@@ -28,6 +43,11 @@
         "et_m06", "et_m07", "et_m08", "et_m09", "et_m10", "et_m11", "et_m12",
         "etrf_m01"
     ],
+    "dataset_by_var": {
+        "et": ["MODIS"],
+        "etrf": ["MODIS"],
+        "etr": []
+    },
     "start_end_mon_days_by_res": {
     	"annual": ["01-01", "12-31"],
     	"seasonal": ["04-01", "10-30"],

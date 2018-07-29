@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Google cloudSQL</h1>
+
+<p>This Python Flask application demonstrates App Engine Flexible, cloudSQL</p>
+<br>
+<p>
+    {{ header }}<br>
+    {% for result in results %}
+        {{  result }}<br>
+    {% endfor %}
+</p>
+
+{% endblock %}

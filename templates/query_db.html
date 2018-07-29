@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="main-container">
+
+<h1 align="center">Query the database here</h1>
+
+<div class="form-container">
+<form  action="" id="form-query_db" method="POST">
+    <div id="form-region">
+        <b>Region: </b><br>
+        <select class="region" id="region" name="region">
+            {% for x,y in form_options.region.items() %}
+            <option value="{{ x }}"
+            {% if x == variables.region  %} selected {% endif %}
+            >{{ y }}</option>
+            {% endfor %}
+        </select><br>
+    </div>
+    <div id='form-dataset'>
+        <b>Dataset:</b><br>
+        <select class="dataset" id="dataset" name="dataset">
+            {% for x,y in form_options.dataset.items() %}
+            <option value="{{ x }}"
+            {% if x == variables.dataset  %} selected {% endif %}
+            {% if x == "Landsat"  %} disabled {% endif %}
+            >{{ y }}</option>
+            {% endfor %}
+        </select><br>
+    </div>
+    <div id='form-model'
+    {% if variables.variable|not_in('et,etrf') %}style="display:none;"{%endif%}>
+        <b>ET Model: </b><br>
+        <select class="et_model" id="et_model" name="et_model">
+            {% for x,y in form_options.et_model.items() %}
+            <option value="{{ x }}"
+            {% if x == variables.et_model  %} selected {% endif %}
+            {% if x != 'SSEBop' %} disabled {% endif %}
+            >{{ y }}</option>
+            {% endfor %}
+        </select><br>
+    </div>
+     <div id='form-year'>
+        <b>Year: </b><br>
+        <select class="years" id="year" name="year">
+            {% for x in form_options.year %}
+            <option value="{{ x }}" {% if x == variables.year  %} selected {% endif %}>{{ x }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div id="form-variable">
+        <b>Variable: </b><br>
+        <select class="variable" id="variable" name="variable">
+            {% for x,y in form_options.variable.items() %}
+            <option value="{{ x }}"
+            {% if x == variables.variable  %} selected {% endif %}
+            {% if x != 'et' %} disbaled {% endif %}
+            >{{ y }}</option>
+            {% endfor %}
+        </select><br>
+    </div>
+    <div id="form-features">
+        <b>Features: </b><br>
+        <select multiple class="features" id="features" name="features">
+            {% for x in form_options.features %}
+            <option value="{{ x }}"
+            {% if x|is_in(variables.features) %} selected {% endif %}
+            >{{ x }}</option>
+            {% endfor %}
+        </select><br>
+    </div>
+    <input type="submit">
+</form>
+</div><!--end form-container-->
+
+
+{% if query_data %}
+    <h2>Query Data</h2>
+    {{ query_data|safe }}
+{% endif %}
+
+</div><!--end main-container-->
+{% endblock %}
