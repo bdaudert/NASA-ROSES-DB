@@ -26,13 +26,25 @@
     "all_region": ["Mason", "US_states_west_500k", "US_counties_west_500k", 
         "US_HUC2_west", "US_HUC4_west", "US_HUC6_west", "US_HUC8_west", "US_HUC10_west"
     ],
+    "all_dataset": {
+        "MODIS": "MODIS"
+    },
     "all_years": {
         "MODIS": ["2003", "2010"],
         "Landsat":["1984", "2010"],
         "gridMet":["1979", "2010"]
     },
+    "all_variable": {
+        "et": "Actual ET",
+        "etrf": "Fractional ET",
+        "etr": "Reference ET",
+        "pr": "Precipitation"
+    },
     "all_et_model":  ["SSEBop"],
     "all_t_res": ["annual", "monthly"],
+    "all_features": [
+        "all", "1", "2", "3"
+    ],
     "all_data_cols": [
         "etr_annual", "et_annual", "etrf_annual", "pr_annual", "net_annual",
         "etr_seasonal", "et_seasonal", "etrf_seasonal", "pr_seasonal", "net_seasonal",

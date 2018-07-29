@@ -39,10 +39,10 @@ def set_form_options(variables):
 
     return form_options
 
-def set_template_values(req_args, app_name, method):
+def set_template_values(RequestHandler, app_name, method):
     '''
     Args:
-    req_args: flask.request.args object
+    requestHandler: webapp2 Requesthandler object
     app_name: application name, e.g. OpenET-1
     dOn: default or not; if dOn =  default
     method: HTTP method GET, POST or shareLink
@@ -55,16 +55,15 @@ def set_template_values(req_args, app_name, method):
         'variables': statics['variable_defaults'],
         'form_options': {}
     }
-    # Overrode default variables if not GET
-    if method == 'POST' or (method == "GET" and req_args):
+    # Override default variables if not GET
+    if method == 'POST' or (method == "API"):
         for var_key, dflt in tv['variables'].iteritems():
-            if isinstance(dflt, list):
-                # LAME: can't enter default list as with get
-                form_val = req_args.getlist(var_key)
-                if not form_val:
-                    form_val = dflt
-            else:
-                form_val = req_args.get(var_key, dflt)
+            if var_key in RequestHandler.request.arguments():
+                if isinstance(dflt, list):
+                    tv['variables'][var_key] = RequestHandler.request.get_all(var_key, dflt)
+                else:
+                    tv['variables'][var_key] = RequestHandler.request.get(var_key, dflt)
+
             tv['variables'][var_key] = form_val
 
     # Set form options

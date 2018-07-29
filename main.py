@@ -22,7 +22,7 @@ from google.appengine.api import users
 import jinja2
 import webapp2
 
-import ee_methods
+
 import template_methods
 import jinja_filters
 
@@ -200,8 +200,10 @@ class query_db(defaultApplication):
     appHTML = 'query_db.html'
 
 app = webapp2.WSGIApplication([
-    ('/', NASA_ROSES),
+    ('/', home),
+    ('/populate_db', populate_db),
+    ('/depopulate_db', depopulate_db),
+    ('/query_db', query_db),
     ('/admin', AdminPage),
-    ('/login', LogInPage),
-    ('/databaseTasks', databaseTasks)
+    ('/login', LogInPage)
 ], debug=True)

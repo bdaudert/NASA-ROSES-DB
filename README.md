@@ -97,8 +97,7 @@ You can find the most up-to-date deployments [here](http://open-et-1.appspot.com
 
    
 ### Repository Organization:
-
-loud
+- Coming soon!
 
 After initializing and activating the conda environment, the development server can be started from within the project folder.  The port only needs to be specificied if not using the default value of 8080.
 
@@ -109,20 +108,10 @@ To run in debugging mode:
 ```
 dev_appserver.py --port 8080 --log_level=debug app.yaml
 ```
-To run in debugging mode with roses-geojson as the default bucket:
+To run in debugging mode with a default bucket set:
 ```
-dev_appserver.py --port 8080 --log_level=debug app.yaml --default_gcs_bucket_name roses-geojson
+dev_appserver.py --port 8080 --log_level=debug app.yaml --default_gcs_bucket_name <bucket name>
 ```
-
-Sometimes windows needs the full path to dev_appserver.py:
-```
-python "c:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin\dev_appserver.py" --port 8080 app.yaml
-```
-
-
-do this:
-gcloud config set disable_usage_reporting true
-
 The app can be then be deployed from within the project folder (the project and version flags may not be necessary).
 ```
 gcloud app deploy --project nasa-roses-datastore --version 1
