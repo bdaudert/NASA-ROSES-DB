@@ -2,6 +2,8 @@ import operator
 
 from config import statics
 
+
+
 def check_form():
     pass
 
@@ -36,7 +38,6 @@ def set_form_options(variables):
     # Set the features
     # FIX ME: we need to set the features according to variable options
     form_options['features'] = statics['all_features']
-
     return form_options
 
 def set_template_values(RequestHandler, app_name, method):
@@ -52,6 +53,7 @@ def set_template_values(RequestHandler, app_name, method):
 
     tv = {
         'app_name': app_name,
+        'method': method,
         'variables': statics['variable_defaults'],
         'form_options': {}
     }
@@ -63,9 +65,12 @@ def set_template_values(RequestHandler, app_name, method):
                     tv['variables'][var_key] = RequestHandler.request.get_all(var_key, dflt)
                 else:
                     tv['variables'][var_key] = RequestHandler.request.get(var_key, dflt)
-
             tv['variables'][var_key] = form_val
-
     # Set form options
     tv['form_options'] = set_form_options(tv['variables'])
+    print(tv)
+
+    # Get the extra template variables for the application
+    if app_name == 'query_db':
+        import ndb_methods
     return tv

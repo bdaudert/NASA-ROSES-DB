@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+'''
+uses google.cloud datastore client to populate/depopulate the database
+'''
+
 import logging
 import json
 import urllib2
@@ -9,9 +13,9 @@ import ee
 # Needed to add data to datastore from outside app engine
 from google.cloud import datastore
 
+
 import config
 import Utils
-
 
 # Set logging level
 logging.basicConfig(level=logging.DEBUG)
@@ -23,7 +27,7 @@ def populate_datastore(region, ds, et_model, compute=True):
         year = str(yr)
         msg = 'PROCESSING Region/Year/Dataset/Model ' + region + '/' + year + '/' + ds + '/' + et_model
         logging.info(msg)
-        ET_helper = database_methods.ET_Util(region, year, ds, et_model)
+        ET_helper = ET_Util(region, year, ds, et_model)
         data_entities, meta_entities = ET_helper.get_data_and_set_db_entities(compute=compute)
         ET_helper.add_to_db(data_entities)
         ET_helper.add_to_db(meta_entities)

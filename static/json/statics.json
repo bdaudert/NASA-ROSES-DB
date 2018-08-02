@@ -23,9 +23,11 @@
             }
         }
     },
-    "all_region": ["Mason", "US_states_west_500k", "US_counties_west_500k", 
-        "US_HUC2_west", "US_HUC4_west", "US_HUC6_west", "US_HUC8_west", "US_HUC10_west"
-    ],
+    "all_region": {
+        "US_states_west_500k": "States, Western US",
+        "US_counties_west_500k": "Counties, Western US",
+        "Mason": "Mason Valley"
+    },
     "all_dataset": {
         "MODIS": "MODIS"
     },
@@ -40,8 +42,16 @@
         "etr": "Reference ET",
         "pr": "Precipitation"
     },
-    "all_et_model":  ["SSEBop"],
-    "all_t_res": ["annual", "monthly"],
+    "all_et_model": {
+        "SSEBop": "SSEBop",
+        "METRIC": "METRIC",
+        "SIMS": "SIMS",
+        "ensemble": "Ensemble"
+    },
+    "all_t_res": {
+        "monthly": "Monthly",
+        "annual": "Annual"
+    },
     "all_features": [
         "all", "1", "2", "3"
     ],

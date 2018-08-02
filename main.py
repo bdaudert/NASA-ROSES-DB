@@ -151,6 +151,7 @@ class defaultApplication(webapp2.RequestHandler):
             if not k.startswith('form') and
             not k.startswith('etdata')
         }
+
         # Log all values at once
         logging.info('{}'.format(log_values))
 
@@ -187,6 +188,10 @@ class home(defaultApplication):
     app_name = 'home'
     appHTML = 'home.html'
 
+'''
+# NOTE: currently can't populate datastore with cloud client datastore
+# grpcio error when pip install requiremets
+# Only standalone scipt works since I found work around
 class populate_db(defaultApplication):
     app_name = 'populate_db'
     appHTML = 'populate.html'
@@ -194,6 +199,7 @@ class populate_db(defaultApplication):
 class depopulate_db(defaultApplication):
     app_name = 'depopulate_db'
     appHTML = 'populate.html'
+'''
 
 class query_db(defaultApplication):
     app_name = 'query_db'
@@ -201,8 +207,8 @@ class query_db(defaultApplication):
 
 app = webapp2.WSGIApplication([
     ('/', home),
-    ('/populate_db', populate_db),
-    ('/depopulate_db', depopulate_db),
+    #('/populate_db', populate_db),
+    #('/depopulate_db', depopulate_db),
     ('/query_db', query_db),
     ('/admin', AdminPage),
     ('/login', LogInPage)

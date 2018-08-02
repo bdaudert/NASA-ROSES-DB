@@ -21,7 +21,8 @@ if __name__ == "__main__":
             # use fake data on localhost
             comp = False
         for ds in ['MODIS']:
-            database_methods.populate_datastore(region, ds, et_model, compute=comp)
+            for et_model in ['SSEBop']
+                database_methods.populate_datastore(region, ds, et_model, compute=comp)
     print(datetime.now() - startTime)
 
 
