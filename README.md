@@ -37,10 +37,15 @@ You can find the most up-to-date deployments [here](http://open-et-1.appspot.com
     conda install numpy=1.6.2=py27_4 oauth2client httplib2 cryptography pyOpenSSL cffi
     
     pip install earthengine-api
-    
+    ```
+
+    To run the standalone datastore population script for populating the local DATASTOR
+    ```
     pip install --no-cache-dir --only-binary :all: grpcio==1.10.1
     
     pip install --upgrade google-cloud
+
+    pip install --upgrade google-cloud-datastore
     ```
     Create the requirements.txt file.
     At a minimum the requirements.txt file should look like this

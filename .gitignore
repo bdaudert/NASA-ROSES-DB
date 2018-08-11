@@ -16,7 +16,6 @@
 *.p12
 *.json
 
-mypython/standalone_populate_datastore.py
 config.py
 ee_test.py
 # Directories

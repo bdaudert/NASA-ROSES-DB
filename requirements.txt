@@ -1,7 +1,7 @@
 earthengine-api >= 0.1.100
 httplib2
-grpcio==1.10.1
-google-cloud-datastore==1.6.0
+grpcio==1.6.0
+gcloud==0.18.3
 Jinja2 == 2.6
 numpy == 1.6.2
 oauth2client

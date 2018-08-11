@@ -155,6 +155,29 @@ class defaultApplication(webapp2.RequestHandler):
         # Log all values at once
         logging.info('{}'.format(log_values))
 
+
+# SET THE APPLICATIONS
+class home(defaultApplication):
+    app_name = 'home'
+    appHTML = 'home.html'
+
+'''
+# NOTE: currently can't populate datastore with cloud client datastore
+# grpcio error when pip install requiremets
+# Only standalone scipt works since I found work around
+class populate_db(defaultApplication):
+    app_name = 'populate_db'
+    appHTML = 'populate.html'
+
+class depopulate_db(defaultApplication):
+    app_name = 'depopulate_db'
+    appHTML = 'populate.html'
+'''
+
+class query_db(defaultApplication):
+    app_name = 'query_db'
+    appHTML = 'query_db.html'
+
 class AdminPage(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
@@ -181,29 +204,6 @@ class LogInPage(webapp2.RequestHandler):
         # [END user_details]
         self.response.write(
             '<html><body>{}</body></html>'.format(greeting))
-
-
-# SET THE APPLICATIONS
-class home(defaultApplication):
-    app_name = 'home'
-    appHTML = 'home.html'
-
-'''
-# NOTE: currently can't populate datastore with cloud client datastore
-# grpcio error when pip install requiremets
-# Only standalone scipt works since I found work around
-class populate_db(defaultApplication):
-    app_name = 'populate_db'
-    appHTML = 'populate.html'
-
-class depopulate_db(defaultApplication):
-    app_name = 'depopulate_db'
-    appHTML = 'populate.html'
-'''
-
-class query_db(defaultApplication):
-    app_name = 'query_db'
-    appHTML = 'query_db.html'
 
 app = webapp2.WSGIApplication([
     ('/', home),

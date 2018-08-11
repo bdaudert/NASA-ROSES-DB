@@ -32,6 +32,8 @@ libraries:
   version: "2.6"
 - name: numpy
   version: "1.6.1"
+- name: grpcio
+  version: latest
 
 #skip_files:
 #- static/geojson/
